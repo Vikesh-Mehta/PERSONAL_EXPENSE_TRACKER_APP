@@ -1,0 +1,36 @@
+/* client/src/components/expenses/ExpenseList.css */
+.expense-list-container {
+  margin-top: 30px;
+}
+
+.expense-list-container h3 {
+  margin-bottom: 15px;
+  color: #444;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 8px;
+  display: inline-block; /* Make border only wrap text */
+}
+
+.expense-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list-message {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+    margin-top: 20px;
+    background-color: #f8f9fa;
+    border: 1px dashed #ccc;
+    border-radius: 5px;
+}
+
+.list-message.error {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    font-style: normal;
+}

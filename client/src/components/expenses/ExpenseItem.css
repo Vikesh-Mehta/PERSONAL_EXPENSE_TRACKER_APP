@@ -1,0 +1,144 @@
+/* client/src/components/expenses/ExpenseItem.css */
+.expense-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 10px; /* Add gap between wrapped items */
+}
+
+.expense-item__main {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between date, description, category */
+    flex-grow: 1; /* Allow this section to grow */
+    flex-basis: 300px; /* Minimum base width before wrapping */
+    flex-wrap: wrap; /* Allow inner items to wrap if needed */
+}
+
+.expense-item__date {
+  font-size: 0.9em;
+  color: #666;
+  background-color: #f0f0f0;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap; /* Prevent date from breaking */
+}
+
+.expense-item__description {
+  font-weight: 600;
+  color: #333;
+  flex-grow: 1; /* Allow description to take available space */
+}
+
+.expense-item__vendor {
+    font-weight: normal;
+    font-size: 0.9em;
+    color: #777;
+    margin-left: 5px;
+}
+
+.expense-item__category {
+  font-size: 0.85em;
+  color: #007bff;
+  background-color: #e7f3ff;
+  padding: 3px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  border: 1px solid #cce5ff;
+}
+
+.expense-item__amount {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #dc3545; /* Red color for expense amount */
+  margin-left: auto; /* Push amount and actions to the right */
+  padding-left: 15px; /* Space before amount */
+  flex-shrink: 0; /* Prevent amount from shrinking too much */
+}
+
+.expense-item__actions {
+  display: flex;
+  gap: 8px; /* Space between buttons */
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+
+.expense-item__actions button {
+  padding: 5px 10px;
+  font-size: 0.8em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.expense-item__actions .edit-btn {
+  background-color: #ffc107; /* Yellow */
+  color: #333;
+}
+.expense-item__actions .edit-btn:hover {
+  background-color: #e0a800;
+}
+
+.expense-item__actions .delete-btn {
+  background-color: #dc3545; /* Red */
+  color: white;
+}
+.expense-item__actions .delete-btn:hover {
+  background-color: #c82333;
+}
+
+/* Optional: Responsive adjustments */
+@media (max-width: 600px) {
+    .expense-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .expense-item__main {
+        flex-basis: auto; /* Reset basis */
+        width: 100%;
+        margin-bottom: 10px;
+    }
+     .expense-item__amount {
+        margin-left: 0; /* Reset margin */
+        padding-left: 0;
+        width: 100%;
+        text-align: right;
+         margin-bottom: 10px;
+    }
+    .expense-item__actions {
+        width: 100%;
+        justify-content: flex-end; /* Align actions to the right */
+    }
+}
+/* client/src/components/expenses/ExpenseItem.css */
+/* ... (previous styles) ... */
+
+.expense-item__project {
+  font-size: 0.8em;
+  color: #6c757d; /* Gray */
+  background-color: #e9ecef;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: normal;
+}
+
+.expense-item__reimbursable {
+   font-size: 0.8em;
+   color: #17a2b8; /* Info blue */
+   font-weight: bold;
+   border: 1px solid #17a2b8;
+   padding: 2px 6px;
+   border-radius: 4px;
+   margin: 0 10px; /* Add some margin */
+   white-space: nowrap;
+}
+
+/* Adjust layout for new elements if needed in media queries */
