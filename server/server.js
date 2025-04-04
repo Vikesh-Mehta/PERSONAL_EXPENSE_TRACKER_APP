@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const expenseRoutes = require('./routes/expenseRoutes');
 const budgetRoutes = require('./routes/budgetRoutes'); // <-- Import budget routes
 const reportRoutes = require('./routes/reportRoutes'); // <-- Import report routes
+const notificationRoutes = require('./routes/notificationRoutes');
 
 
 // Load env vars
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/budgets', budgetRoutes); // <-- Mount budget routes
 app.use('/api/reports', reportRoutes); // <-- Mount report routes
+app.use('/api/notifications', notificationRoutes);
 
 // Simple route for testing
 app.get('/', (req, res) => res.send('Expense Tracker API Running'));

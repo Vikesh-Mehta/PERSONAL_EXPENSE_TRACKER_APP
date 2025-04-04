@@ -3,33 +3,36 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AuthForm from '../components/auth/AuthForm';
 import useAuth from '../hooks/useAuth';
+import AuthLayout from '../components/auth/AuthLayout'; // Import the layout
+import Spinner from '../components/common/Spinner'; // Import Spinner
 
 const LoginPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { isAuthenticated, loading } = useAuth();
 
-    // Redirect if already logged in
     useEffect(() => {
         if (isAuthenticated && !loading) {
-             // Redirect to dashboard or intended page after login
-             const from = location.state?.from?.pathname || '/dashboard';
-             console.log("Login Page: Already authenticated, redirecting to", from);
-             navigate(from, { replace: true });
+            const from = location.state?.from?.pathname || '/dashboard';
+            navigate(from, { replace: true });
         }
     }, [isAuthenticated, loading, navigate, location.state]);
 
-     // Don't render the form if we are loading or already authenticated and about to redirect
-    if (loading || isAuthenticated) {
-        return null; // Or a loading indicator if preferred
+    // Show spinner centered if loading auth state initially
+    if (loading) {
+        return <Spinner />;
     }
 
+    // If authenticated, don't render anything (will redirect)
+    if (isAuthenticated) {
+        return null;
+    }
 
     return (
-        <div>
-            {/* <h1>Login</h1> */}
+        // Use the AuthLayout
+        <AuthLayout>
             <AuthForm isRegister={false} />
-        </div>
+        </AuthLayout>
     );
 };
 

@@ -1,123 +1,102 @@
 // client/src/components/auth/AuthForm.js
 import React, { useState } from 'react';
-import useAuth from '../../hooks/useAuth'; // Import the custom hook
-import { Link } from 'react-router-dom'; // For linking between login/register
-import './AuthForm.css'; // Add some basic styling
+import useAuth from '../../hooks/useAuth';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion'; // Import motion
+import { FaUser, FaEnvelope, FaLock, FaSignInAlt, FaUserPlus, FaExclamationCircle } from 'react-icons/fa'; // Import icons
+import './AuthForm.css';
 
 const AuthForm = ({ isRegister = false }) => {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '', // Only for registration
-    });
-    const [formError, setFormError] = useState(''); // Specific form errors (e.g., password mismatch)
-
-    const { login, register, loading, error: authError, clearError } = useAuth(); // Get functions and state from context
-
+    const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+    const [formError, setFormError] = useState('');
+    const { login, register, loading, error: authError, clearError } = useAuth();
     const { name, email, password, confirmPassword } = formData;
 
-    const onChange = (e) => {
+    const onChange = (e) => { /* ... same as before ... */
         setFormData({ ...formData, [e.target.name]: e.target.value });
-         // Clear errors when user starts typing again
         if (formError) setFormError('');
         if (authError) clearError();
-    }
-
-    const onSubmit = async (e) => {
+    };
+    const onSubmit = async (e) => { /* ... same as before ... */
         e.preventDefault();
-        setFormError(''); // Clear previous form errors
-        if (authError) clearError(); // Clear previous auth errors
-
-
+        setFormError('');
+        if (authError) clearError();
         if (isRegister) {
-            if (password !== confirmPassword) {
-                setFormError('Passwords do not match');
-                return;
-            }
-             if (password.length < 6) {
-                setFormError('Password must be at least 6 characters');
-                return;
-            }
+            if (password !== confirmPassword) return setFormError('Passwords do not match');
+            if (password.length < 6) return setFormError('Password must be at least 6 characters');
             await register({ name, email, password });
-            // Navigation will be handled by the page component based on success/failure
         } else {
             await login({ email, password });
-             // Navigation will be handled by the page component based on success/failure
         }
     };
 
+    // Animation variants for the form container
+    const formVariants = {
+        hidden: { y: 50, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: { type: 'spring', stiffness: 100, delay: 0.3 } // Delay slightly after layout appears
+        },
+    };
+
     return (
-        <div className="auth-form-container">
-            <h2>{isRegister ? 'Register' : 'Login'}</h2>
+        // Use motion.div for animation
+        <motion.div
+            className="auth-form-container"
+            variants={formVariants}
+            initial="hidden" // Start hidden (relative to parent's animation state)
+            animate="visible" // Animate to visible
+        >
+            <h2>{isRegister ? 'Create Account' : 'Welcome Back!'}</h2>
             <form onSubmit={onSubmit}>
                 {isRegister && (
-                    <div className="form-group">
-                        <label htmlFor="name">Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            id="name"
-                            value={name}
-                            onChange={onChange}
-                            required
-                        />
+                    <div className="form-group icon-input">
+                        <FaUser className="input-icon" /> {/* Icon */}
+                        <input type="text" name="name" placeholder="Full Name" value={name} onChange={onChange} required />
                     </div>
                 )}
-                <div className="form-group">
-                    <label htmlFor="email">Email Address</label>
-                    <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        value={email}
-                        onChange={onChange}
-                        required
-                    />
+                <div className="form-group icon-input">
+                     <FaEnvelope className="input-icon" /> {/* Icon */}
+                    <input type="email" name="email" placeholder="Email Address" value={email} onChange={onChange} required />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        name="password"
-                        id="password"
-                        value={password}
-                        onChange={onChange}
-                        required
-                        minLength={isRegister ? "6" : undefined} // Enforce minLength only on register visually
-                    />
+                <div className="form-group icon-input">
+                     <FaLock className="input-icon" /> {/* Icon */}
+                    <input type="password" name="password" placeholder="Password" value={password} onChange={onChange} required minLength={isRegister ? "6" : undefined} />
                 </div>
                 {isRegister && (
-                    <div className="form-group">
-                        <label htmlFor="confirmPassword">Confirm Password</label>
-                        <input
-                            type="password"
-                            name="confirmPassword"
-                            id="confirmPassword"
-                            value={confirmPassword}
-                            onChange={onChange}
-                            required
-                        />
+                    <div className="form-group icon-input">
+                         <FaLock className="input-icon" /> {/* Icon */}
+                        <input type="password" name="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={onChange} required />
                     </div>
                 )}
 
-                {/* Display Errors */}
-                {formError && <p className="error-message">{formError}</p>}
-                {authError && <p className="error-message">{authError}</p>}
+                {/* Display Errors with Icon */}
+                {formError && <p className="error-message"><FaExclamationCircle /> {formError}</p>}
+                {authError && <p className="error-message"><FaExclamationCircle /> {authError}</p>}
 
 
-                <button type="submit" disabled={loading} className="auth-button">
-                    {loading ? 'Processing...' : (isRegister ? 'Register' : 'Login')}
-                </button>
+                <motion.button
+                    type="submit"
+                    disabled={loading}
+                    className="auth-button"
+                    whileHover={{ scale: 1.03 }} // Hover effect
+                    whileTap={{ scale: 0.98 }} // Tap effect
+                >
+                     {/* Icon on Button */}
+                    {loading ? 'Processing...' : (
+                        isRegister ? <><FaUserPlus /> Register</> : <><FaSignInAlt /> Login</>
+                    )}
+                </motion.button>
             </form>
             <div className="auth-switch-link">
                 {isRegister ? (
-                    <p>Already have an account? <Link to="/login">Login</Link></p>
+                    <p>Already have an account? <Link to="/login">Login Here</Link></p>
                 ) : (
-                    <p>Don't have an account? <Link to="/register">Register</Link></p>
+                    <p>Don't have an account? <Link to="/register">Register Now</Link></p>
                 )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 

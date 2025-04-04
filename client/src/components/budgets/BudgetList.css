@@ -1,0 +1,26 @@
+/* client/src/components/budgets/BudgetItem.css */
+.budget-item { /* ... base styles: padding, margin, background, border, shadow ... */
+  display: grid; /* Use grid for better layout */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
+  gap: 10px 15px;
+  align-items: center;
+  border-left: 5px solid var(--primary-color); /* Default border color */
+  transition: border-color 0.3s ease;
+}
+.budget-item.overspent { border-left-color: var(--error-color); }
+
+.budget-item-main { /* ... styles for category, period ... */ }
+.budget-item-category { font-weight: 600; font-size: 1.1rem; }
+.budget-item-period { font-size: 0.9rem; color: var(--text-muted); margin-left: 5px;}
+
+.budget-item-details { /* ... styles for amounts ... */ display: flex; flex-direction: column; gap: 2px; font-size: 0.95rem; }
+.budget-item-spent.overspent-text, .budget-item-remaining.overspent-text { color: var(--error-color); font-weight: 500; }
+
+.budget-item-progress { grid-column: 1 / -1; /* Span full width */ margin-top: 5px; }
+.progress-bar-container { /* ... styles: height, background, border-radius ... */ height: 8px; background-color: #e9ecef; border-radius: 4px; overflow: hidden; }
+.progress-bar-filled { /* ... styles: height, border-radius, transition ... */ height: 100%; border-radius: 4px; transition: width 0.4s ease, background-color 0.4s ease; }
+
+.budget-item-actions { justify-self: end; /* Align to the right end of the grid cell */ }
+.budget-item-actions .action-btn { /* ... reuse styles from ExpenseItem actions ... */ }
+
+/* Add media queries for grid adjustments if needed */

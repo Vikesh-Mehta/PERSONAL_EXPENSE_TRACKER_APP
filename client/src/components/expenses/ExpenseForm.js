@@ -14,7 +14,6 @@ const ExpenseForm = ({ expenseToEdit, onFormSubmit, onCancelEdit }) => {
         setCategories(expenseService.getStandardCategories());
     }, []);
 
-
     const initialState = {
         description: '',
         amount: '',
@@ -26,6 +25,7 @@ const ExpenseForm = ({ expenseToEdit, onFormSubmit, onCancelEdit }) => {
         project: '', // New field
         isReimbursable: false, // New field
         receiptUrl: '', // New field (basic input for now, real upload is complex)
+        receiptFile: null, // State for file input
     };
 
     const [formData, setFormData] = useState(initialState);
@@ -45,6 +45,7 @@ const ExpenseForm = ({ expenseToEdit, onFormSubmit, onCancelEdit }) => {
                 project: expenseToEdit.project || '', // Populate new fields
                 isReimbursable: expenseToEdit.isReimbursable || false,
                 receiptUrl: expenseToEdit.receiptUrl || '',
+                receiptFile: null, // Reset file input
             });
         } else {
             setFormData({
@@ -65,13 +66,28 @@ const ExpenseForm = ({ expenseToEdit, onFormSubmit, onCancelEdit }) => {
         setError('');
     };
 
+    const handleFileChange = (e) => {
+        setFormData({
+            ...formData,
+            receiptFile: e.target.files[0], // Store the selected file
+        });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         // ... (validation remains similar, check required fields)
         setError('');
         setLoading(true);
-        if (!formData.description || !formData.amount || !formData.category || !formData.date) { /*...*/ return; }
-        if (isNaN(parseFloat(formData.amount)) || parseFloat(formData.amount) <= 0) { /*...*/ return; }
+        if (!formData.description || !formData.amount || !formData.category || !formData.date) {
+            setError('Please fill in all required fields.');
+            setLoading(false);
+            return;
+        }
+        if (isNaN(parseFloat(formData.amount)) || parseFloat(formData.amount) <= 0) {
+            setError('Amount must be a positive number.');
+            setLoading(false);
+            return;
+        }
 
         try {
             const dataToSubmit = { ...formData, amount: parseFloat(formData.amount) };
@@ -82,22 +98,25 @@ const ExpenseForm = ({ expenseToEdit, onFormSubmit, onCancelEdit }) => {
             }
             onFormSubmit();
             setFormData({ // Reset form
-                 ...initialState,
-                 date: formatDateForInput(new Date()),
-                 category: categories.length > 0 ? categories[0] : ''
+                ...initialState,
+                date: formatDateForInput(new Date()),
+                category: categories.length > 0 ? categories[0] : ''
             });
-        } catch (err) { /* ... error handling ... */ }
-        finally { setLoading(false); }
+        } catch (err) {
+            setError('An error occurred while saving the expense.'); // Error handling
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleCancel = () => { /* ... cancel logic ... */
-         if (expenseToEdit && onCancelEdit) onCancelEdit();
-         setFormData({
-             ...initialState,
-             date: formatDateForInput(new Date()),
-             category: categories.length > 0 ? categories[0] : ''
-         });
-         setError('');
+    const handleCancel = () => {
+        if (expenseToEdit && onCancelEdit) onCancelEdit();
+        setFormData({
+            ...initialState,
+            date: formatDateForInput(new Date()),
+            category: categories.length > 0 ? categories[0] : ''
+        });
+        setError('');
     };
 
     return (
@@ -131,51 +150,62 @@ const ExpenseForm = ({ expenseToEdit, onFormSubmit, onCancelEdit }) => {
                 </div>
             </div>
 
-             {/* Row 3: Vendor, Payment Method (Optional) */}
-             <div className="form-row">
-                 <div className="form-group">
-                     <label htmlFor="vendor" className="optional">Vendor</label>
-                     <input type="text" id="vendor" name="vendor" value={formData.vendor} onChange={handleChange} />
-                 </div>
-                 <div className="form-group">
-                     <label htmlFor="paymentMethod" className="optional">Payment Method</label>
-                     <input type="text" id="paymentMethod" name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} />
-                 </div>
-             </div>
+            {/* Row 3: Vendor, Payment Method (Optional) */}
+            <div className="form-row">
+                <div className="form-group">
+                    <label htmlFor="vendor" className="optional">Vendor</label>
+                    <input type="text" id="vendor" name="vendor" value={formData.vendor} onChange={handleChange} />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="paymentMethod" className="optional">Payment Method</label>
+                    <input type="text" id="paymentMethod" name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} />
+                </div>
+            </div>
 
             {/* --- Business/Project Specific Fields --- */}
             <div className="form-section business-fields"> {/* Optional: Group visually */}
-                 <h4>Business Details (Optional)</h4>
-                 <div className="form-row">
-                     <div className="form-group">
-                         <label htmlFor="project" className="optional">Project/Client</label>
-                         <input type="text" id="project" name="project" value={formData.project} onChange={handleChange} />
-                     </div>
-                     <div className="form-group">
-                         <label htmlFor="receiptUrl" className="optional">Receipt URL</label>
-                         <input type="text" id="receiptUrl" name="receiptUrl" value={formData.receiptUrl} onChange={handleChange} placeholder="Link to uploaded receipt" />
-                         {/* Note: Actual file upload requires more work (multer backend, frontend state for file) */}
-                     </div>
-                 </div>
-                 <div className="form-group checkbox-group">
-                     <input type="checkbox" id="isReimbursable" name="isReimbursable" checked={formData.isReimbursable} onChange={handleChange} />
-                     <label htmlFor="isReimbursable">Is this expense reimbursable?</label>
-                 </div>
+                <h4>Business Details (Optional)</h4>
+                <div className="form-row">
+                    <div className="form-group">
+                        <label htmlFor="project" className="optional">Project/Client</label>
+                        <input type="text" id="project" name="project" value={formData.project} onChange={handleChange} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="receiptUrl" className="optional">Receipt URL</label>
+                        <input type="text" id="receiptUrl" name="receiptUrl" value={formData.receiptUrl} onChange={handleChange} placeholder="Link to uploaded receipt" />
+                    </div>
+                    {/* --- VISUAL FILE INPUT --- */}
+                    <div className="form-group">
+                        <label htmlFor="receiptFile" className="optional">Upload Receipt</label>
+                        <input
+                            type="file"
+                            id="receiptFile"
+                            name="receiptFile"
+                            onChange={handleFileChange} // Handle file change
+                            accept="image/*,.pdf" // Accept images and PDFs
+                            className="file-input"
+                        />
+                        <small>(File upload not functional in this version)</small>
+                    </div>
+                    {/* ----------------------- */}
+                    <div className="form-group checkbox-group">
+                        <input type="checkbox" id="isReimbursable" name="isReimbursable" checked={formData.isReimbursable} onChange={handleChange} />
+                        <label htmlFor="isReimbursable">Is this expense reimbursable?</label>
+                    </div>
+                </div>
             </div>
-             {/* -------------------------------------- */}
+            {/* -------------------------------------- */}
 
-
-             {/* Notes Field */}
+            {/* Notes Field */}
             <div className="form-group">
                 <label htmlFor="notes" className="optional">Notes</label>
                 <textarea id="notes" name="notes" value={formData.notes} onChange={handleChange} rows="3"></textarea>
             </div>
 
             <div className="form-actions">
-                {/* ... buttons ... */}
-                <button type="submit" disabled={loading}> {/* ... */} </button>
-                {(expenseToEdit || formData.description || formData.amount ) && (
-                    <button type="button" onClick={handleCancel} className="cancel-btn"> {/* ... */} </button>
+                <button type="submit" disabled={loading}>Submit</button>
+                {(expenseToEdit || formData.description || formData.amount) && (
+                    <button type="button" onClick={handleCancel} className="cancel-btn">Cancel</button>
                 )}
             </div>
         </form>

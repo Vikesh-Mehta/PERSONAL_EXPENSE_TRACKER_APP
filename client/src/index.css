@@ -24,3 +24,129 @@ code {
 }
 
 /* You might want to add resets or normalize.css here */
+
+/* client/src/index.css */
+
+/* Define Color Palette (Example - Choose colors you like!) */
+:root {
+  --primary-color: #4F46E5; /* Indigo */
+  --primary-color-dark: #4338CA;
+  --secondary-color: #10B981; /* Emerald Green */
+  --secondary-color-dark: #059669;
+  --accent-color: #F59E0B; /* Amber */
+  --background-light: #F9FAFB; /* Very light gray */
+  --background-gradient-start: #6366F1; /* Gradient variant */
+  --background-gradient-end: #8B5CF6;   /* Gradient variant */
+  --text-dark: #1F2937; /* Dark Gray */
+  --text-light: #F9FAFB;
+  --text-muted: #6B7280; /* Medium Gray */
+  --border-color: #D1D5DB;
+  --success-color: #10B981; /* Same as secondary */
+  --error-color: #EF4444; /* Red */
+  --white: #ffffff;
+  --card-bg: var(--white);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --border-radius: 8px;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-light); /* Use variable */
+  color: var(--text-dark); /* Use variable */
+  line-height: 1.6;
+}
+
+/* Optional: Add a subtle background pattern or gradient */
+/* body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+  opacity: 0.1; */
+  /* background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1); */
+  /* background: radial-gradient(circle, rgba(79,70,229,0.05) 0%, rgba(249,250,251,0) 60%); */
+/* } */
+
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* General Button Style */
+button {
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 0.95rem;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* General Input Styling */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-sizing: border-box;
+  font-size: 1rem;
+  background-color: var(--white);
+  color: var(--text-dark);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); /* Focus ring */
+}
+
+/* Style for error messages */
+.error-message {
+    color: var(--error-color);
+    background-color: rgba(239, 68, 68, 0.1); /* Light red background */
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.error-message svg { /* Style icon inside error */
+    flex-shrink: 0;
+}

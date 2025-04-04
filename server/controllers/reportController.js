@@ -1,6 +1,7 @@
 // server/controllers/reportController.js
 const Expense = require('../models/Expense');
 const Budget = require('../models/Budget');
+const Notification = require('../models/Notification'); // Import model
 const mongoose = require('mongoose'); // Import mongoose for ObjectId validation
 
 // Helper function from budgetController (or move to a shared utils file)
@@ -8,7 +9,7 @@ const getPeriodDates = (period, date = new Date()) => {
     let startDate, endDate;
     const year = date.getFullYear();
     const month = date.getMonth();
-    switch (period) { /* ... (include the full function from budgetController) ... */
+    switch (period) {
         case 'Monthly': startDate = new Date(year, month, 1); endDate = new Date(year, month + 1, 0, 23, 59, 59, 999); break;
         case 'Yearly': startDate = new Date(year, 0, 1); endDate = new Date(year, 11, 31, 23, 59, 59, 999); break;
         // Add other cases: Quarterly, Weekly
@@ -16,7 +17,6 @@ const getPeriodDates = (period, date = new Date()) => {
     }
     return { startDate, endDate };
 };
-
 
 // @desc    Get spending summary by category for a given period
 // @route   GET /api/reports/category-summary?period=Monthly&date=YYYY-MM-DD
@@ -33,7 +33,7 @@ exports.getSpendingByCategory = async (req, res, next) => {
         const { startDate, endDate } = getPeriodDates(period, dateParam);
 
         if (!startDate || !endDate) {
-             return res.status(400).json({ success: false, message: 'Invalid period specified.' });
+            return res.status(400).json({ success: false, message: 'Invalid period specified.' });
         }
 
         const categorySummary = await Expense.aggregate([
@@ -75,34 +75,31 @@ exports.getSpendingByCategory = async (req, res, next) => {
     }
 };
 
-
 // @desc    Get budget vs actual spending report for a given period
 // @route   GET /api/reports/budget-status?period=Monthly&date=YYYY-MM-DD
 // @access  Private
 exports.getBudgetStatusReport = async (req, res, next) => {
-     try {
+    try {
         const userId = req.user.id;
         const period = req.query.period || 'Monthly';
         const dateParam = req.query.date ? new Date(req.query.date) : new Date();
-         if (isNaN(dateParam)) {
+        if (isNaN(dateParam)) {
             return res.status(400).json({ success: false, message: 'Invalid date parameter.' });
         }
 
         const { startDate, endDate } = getPeriodDates(period, dateParam);
-         if (!startDate || !endDate) {
-             return res.status(400).json({ success: false, message: 'Invalid period specified.' });
+        if (!startDate || !endDate) {
+            return res.status(400).json({ success: false, message: 'Invalid period specified.' });
         }
 
-        // 1. Get budgets relevant to the period (simplified: find budgets with matching period type for now)
-        //    A more accurate query would find budgets whose [startDate, endDate] overlaps with the report's [startDate, endDate]
+        // 1. Get budgets relevant to the period
         const budgets = await Budget.find({
             user: userId,
-            period: period, // Simple match by period type
-             // Add date overlap check if needed: e.g., startDate: { $lte: reportEndDate }, endDate: { $gte: reportStartDate }
+            period: period,
         }).lean(); // Use .lean() for plain JS objects
 
         // 2. Get actual spending grouped by category for the period
-         const actualSpending = await Expense.aggregate([
+        const actualSpending = await Expense.aggregate([
             { $match: { user: new mongoose.Types.ObjectId(userId), date: { $gte: startDate, $lte: endDate } } },
             { $group: { _id: '$category', totalAmount: { $sum: '$amount' } } },
             { $project: { _id: 0, category: '$_id', totalAmount: 1 } }
@@ -124,19 +121,18 @@ exports.getBudgetStatusReport = async (req, res, next) => {
             };
         });
 
-         // Optional: Add categories with spending but no budget
-         actualSpending.forEach(actual => {
-             if (!reportData.some(item => item.category === actual.category)) {
-                 reportData.push({
-                     category: actual.category,
-                     budgetedAmount: 0,
-                     spentAmount: actual.totalAmount,
-                     remainingAmount: -actual.totalAmount, // Negative remaining
-                      percentageSpent: Infinity // Or handle differently
-                 });
-             }
-         });
-
+        // Optional: Add categories with spending but no budget
+        actualSpending.forEach(actual => {
+            if (!reportData.some(item => item.category === actual.category)) {
+                reportData.push({
+                    category: actual.category,
+                    budgetedAmount: 0,
+                    spentAmount: actual.totalAmount,
+                    remainingAmount: -actual.totalAmount, // Negative remaining
+                    percentageSpent: Infinity // Or handle differently
+                });
+            }
+        });
 
         res.status(200).json({
             success: true,
@@ -153,9 +149,7 @@ exports.getBudgetStatusReport = async (req, res, next) => {
 };
 
 // --- Placeholder for Notification Logic ---
-// This would likely live in the expenseController or a dedicated notification service
 exports.checkBudgetNotifications = async (userId, expense) => {
-    // This is called *after* an expense is added/updated
     console.log(`Checking budget notifications for user ${userId} after expense:`, expense.description);
     try {
         const periodDates = getPeriodDates('Monthly', expense.date); // Check against monthly budget for simplicity
@@ -164,12 +158,10 @@ exports.checkBudgetNotifications = async (userId, expense) => {
             user: userId,
             category: expense.category,
             period: 'Monthly', // Assuming monthly check for now
-             startDate: { $lte: expense.date }, // Budget started before or on expense date
-             // Add endDate check if applicable
+            startDate: { $lte: expense.date }, // Budget started before or on expense date
         });
 
         if (!budget) {
-            // console.log(`No budget found for category ${expense.category} in the relevant period.`);
             return; // No budget set for this category/period
         }
 
@@ -186,8 +178,7 @@ exports.checkBudgetNotifications = async (userId, expense) => {
 
         let notificationMessage = null;
 
-        // Check thresholds (ensure we don't notify repeatedly for the same threshold breach)
-        // TODO: Need a mechanism to track *if* a notification for 80% or 100% was already sent for this budget/period
+        // Check thresholds
         if (currentSpending >= oneHundredPercent) {
             notificationMessage = `Budget Alert: You have exceeded your ${budget.period} budget of ₹${budget.amount.toFixed(2)} for ${budget.category}. Current spending: ₹${currentSpending.toFixed(2)}.`;
         } else if (currentSpending >= eightyPercent) {
@@ -196,12 +187,28 @@ exports.checkBudgetNotifications = async (userId, expense) => {
 
         if (notificationMessage) {
             console.log("NOTIFICATION TO USER:", userId, notificationMessage);
-            // --- Integration Point ---
-            // Here you would:
-            // 1. Save this notification to a Notification collection in the DB.
-            // 2. If using WebSockets/SSE, push this message to the connected client.
-            // 3. If not real-time, the user will fetch it later via a notification endpoint.
-            // Example: await Notification.create({ user: userId, message: notificationMessage, type: 'budget' });
+            try {
+                // Check if a similar unread notification already exists to avoid spam
+                const existingNotification = await Notification.findOne({
+                    user: userId,
+                    type: 'budget',
+                    message: notificationMessage, // Simple message match for now
+                    isRead: false
+                });
+
+                if (!existingNotification) {
+                    await Notification.create({
+                        user: userId,
+                        message: notificationMessage,
+                        type: 'budget',
+                    });
+                    console.log("Notification saved for user:", userId);
+                } else {
+                    console.log("Similar unread notification already exists for user:", userId);
+                }
+            } catch (dbError) {
+                console.error("Failed to save notification:", dbError);
+            }
         }
 
     } catch (error) {

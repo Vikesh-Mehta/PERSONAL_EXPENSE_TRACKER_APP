@@ -8,20 +8,20 @@ const ProtectedRoute = ({ children }) => {
     const { isAuthenticated, loading } = useAuth();
     const location = useLocation(); // Get current location
 
+    console.log(`ProtectedRoute for ${location.pathname}: loading=${loading}, isAuthenticated=${isAuthenticated}`); // Log authentication status
+
     if (loading) {
-        // Show spinner while checking authentication status
+        console.log(`ProtectedRoute for ${location.pathname}: Showing Spinner`); // Log when showing spinner
         return <Spinner />;
     }
 
     if (!isAuthenticated) {
-        // Redirect them to the /login page, but save the current location they were
-        // trying to go to. This allows us to send them along to that page after they login,
-        // which is a nicer user experience than dropping them off on the home page.
+        console.log(`ProtectedRoute for ${location.pathname}: Redirecting to /login`); // Log redirection to login
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    // If authenticated, render the child components (the protected page)
-    return children;
+    console.log(`ProtectedRoute for ${location.pathname}: Rendering children`); // Log when rendering children
+    return children; // Render the protected page component
 };
 
 export default ProtectedRoute;

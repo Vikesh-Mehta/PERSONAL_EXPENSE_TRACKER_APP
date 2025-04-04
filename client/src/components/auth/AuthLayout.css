@@ -1,0 +1,101 @@
+/* client/src/components/auth/AuthLayout.css */
+.auth-layout-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center; /* Vertically center content */
+  justify-content: center; /* Horizontally center content */
+  background: linear-gradient(135deg, var(--background-gradient-start), var(--background-gradient-end));
+  /* background: var(--background-light); fallback */
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent scrollbars from potential overflow during animation */
+}
+
+/* Adjust flex direction for smaller screens */
+@media (min-width: 992px) {
+  .auth-layout-container {
+    flex-direction: row;
+  }
+}
+@media (max-width: 991px) {
+    .auth-layout-container {
+        flex-direction: column;
+        padding-top: 40px; /* Add space at top on mobile */
+    }
+}
+
+
+.auth-graphic-side {
+  flex: 1; /* Take available space */
+  padding: 40px;
+  text-align: center;
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-graphic-side h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.auth-graphic-side .tagline {
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
+    opacity: 0.9;
+}
+
+.animated-icons {
+    display: flex;
+    gap: 40px; /* Space between icons */
+    margin-top: 20px;
+}
+
+.animated-icons .icon {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+    cursor: grab; /* Indicate interactivity */
+}
+.animated-icons .icon.piggy { color: #FBCFE8; } /* Light pink */
+.animated-icons .icon.chart { color: #A7F3D0; } /* Light green */
+.animated-icons .icon.coins { color: #FEF3C7; } /* Light yellow */
+
+
+.auth-form-side {
+  flex-basis: 500px; /* Fixed or max width for the form area */
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+   padding: 20px; /* Padding around the form itself */
+}
+
+/* Ensure the AuthForm component fits well */
+.auth-form-side > * { /* Target the direct child, which is AuthForm */
+    width: 100%;
+    max-width: 420px; /* Max width of the form itself inside the side */
+}
+
+/* Responsive adjustments for the graphic side text/icons */
+@media (max-width: 991px) {
+    .auth-graphic-side {
+        padding: 20px;
+        margin-bottom: 30px; /* Space between graphic and form on mobile */
+    }
+     .auth-graphic-side h1 { font-size: 2rem; }
+     .auth-graphic-side .tagline { font-size: 1rem; margin-bottom: 2rem;}
+    .animated-icons { gap: 30px; }
+    .animated-icons .icon { size: 40px; }
+}
+
+@media (max-width: 768px) {
+     .auth-form-side {
+         padding: 10px; /* Reduce padding on smaller screens */
+     }
+      .auth-form-side > * {
+          max-width: 100%; /* Allow form to take full width */
+      }
+}

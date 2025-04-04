@@ -1,8 +1,8 @@
 /* client/src/pages/DashboardPage.css */
 .dashboard-container {
-  max-width: 1000px; /* Adjust as needed */
-  margin: 20px auto;
-  padding: 0 20px; /* Add horizontal padding */
+  max-width: 1100px; /* Slightly wider maybe */
+  margin: 30px auto;
+  padding: 0 25px;
 }
 
 .dashboard-header {
@@ -10,50 +10,114 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #ccc;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .dashboard-header h1 {
   margin: 0;
-  color: #333;
+  color: var(--text-dark);
+  font-size: 1.8rem;
+  font-weight: 600;
 }
 
 .user-info {
     display: flex;
     align-items: center;
-    gap: 15px; /* Space between welcome message and button */
+    gap: 20px;
 }
 
 .user-info span {
     font-weight: 500;
+    color: var(--text-muted);
 }
 
 .logout-button {
   padding: 8px 15px;
-  background-color: #dc3545;
-  color: white;
+  background-color: var(--error-color); /* Use error color */
+  color: var(--white);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background-color 0.2s ease;
-}
-
-.logout-button:hover {
-  background-color: #c82333;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Transitions handled by framer-motion */
 }
 
 .dashboard-content {
-    /* You might use CSS Grid or Flexbox for layout later */
+    /* Layout content */
 }
 
+.toggle-form-button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 auto 30px auto; /* Center button */
+    border: none;
+    box-shadow: var(--shadow-md);
+}
+.toggle-form-button:hover {
+     background-color: var(--primary-color-dark);
+}
+
+/* Section spacing is handled by form container margin now */
 .expense-form-section {
-    margin-bottom: 40px; /* Space between form and list */
+    overflow: hidden; /* Important for height animation */
 }
 
 .expense-list-section {
-    /* Styles for the list section container if needed */
+    margin-top: 20px; /* Adjust spacing if needed */
 }
 
-/* Add styles for future sections like budget-section, reports-section */
+.total-expenses-display {
+    background-color: var(--card-bg);
+    padding: 15px 25px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 5px solid var(--accent-color); /* Accent border */
+}
+
+.total-expenses-display h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.total-expenses-display .total-amount {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .user-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+     .total-expenses-display {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+     }
+     .total-expenses-display .total-amount { font-size: 1.2rem; }
+}
