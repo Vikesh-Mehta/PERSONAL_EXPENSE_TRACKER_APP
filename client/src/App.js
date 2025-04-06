@@ -11,6 +11,8 @@ import Navbar from './components/layout/Navbar';
 import './App.css'; // Import main CSS
 import BudgetPage from './pages/BudgetPage';
 import ReportsPage from './pages/ReportsPage';
+import useAuth from './hooks/useAuth';
+import Spinner from './components/common/Spinner';
 
 function App() {
     return (
